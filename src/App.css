@@ -1,38 +1,65 @@
-.App {
-  text-align: center;
+*,
+::before,
+::after {
+  box-sizing: border-box;
+
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.app {
+  padding: 2px 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+fieldset {
   display: flex;
   flex-direction: column;
+  row-gap: 20px;
+}
+
+legend {
+  color: rgb(44, 63, 235);
+}
+
+fieldset input {
+  padding: 10px 5px;
+  outline: none;
+  border-radius: 15px;
+  border: 0.7px solid rgb(72, 72, 249)
+}
+
+input[type=file] {
+  margin: 2px;
+}
+
+button {
+  display: block;
+  background-color: rgb(38, 38, 224);
+  color: white;
+  font-size: 20px;
+  font-style: bold;
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 5px;
+  padding: 10px 6px;
+  outline: none;
+  border: none;
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.289);
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.message {
+  background: white;
+  padding: 10px 20px;
+  width: 100%;
+  height: 100px;
+  color: rgb(37, 37, 195);
 }
