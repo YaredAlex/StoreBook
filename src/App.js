@@ -18,17 +18,10 @@ function App() {
   const [imagefile, setImgfile] = useState("");
   const imageUrl = useRef("")
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const uploadFile = async () => {
     const isChecked = await checkInput();
     if (isChecked) {
-      // const storage = getStorage();
-      // const storageRef = ref(storage, 'some-child');
-      // uploadBytes(storageRef, file).then((snapshot) => {
-      //   console.log('Uploaded a blob or file!');
-      //   console.log("snapshot", spanshot)
-      //   fileUrl = snapshot.ref.getDownloadURL();
-
-      // });
       setShow(true)
       const storage = getStorage();
       try {
@@ -36,8 +29,6 @@ function App() {
         const uploadTask = uploadBytesResumable(storageRef, file);
         uploadTask.on('state_changed',
           (snapshot) => {
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             setUploadPercent(progress)
             switch (snapshot.state) {
@@ -55,13 +46,10 @@ function App() {
 
           },
           () => {
-            // Handle successful uploads on complete
-            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               fileUrl.current = downloadURL;
               // uploadToFireBase();
               uploadImage();
-
             });
           }
         );
@@ -83,8 +71,6 @@ function App() {
       const uploadTask = uploadBytesResumable(storageRef, imagefile);
       uploadTask.on('state_changed',
         (snapshot) => {
-          // Observe state change events such as progress, pause, and resume
-          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setUploadPercent(progress)
           switch (snapshot.state) {
@@ -102,8 +88,6 @@ function App() {
 
         },
         () => {
-          // Handle successful uploads on complete
-          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             imageUrl.current = downloadURL
             console.log("fileUrl is", fileUrl, "image url is", imageUrl)
@@ -127,7 +111,8 @@ function App() {
         rating: rating,
         fileUrl: fileUrl.current,
         imageUrl: imageUrl.current,
-        description: description
+        description: description,
+        category: category
       }).then(res => {
         console.log("uploaded", res)
         swal("Uploaded", "file uploaded successfully", "success");
@@ -139,6 +124,7 @@ function App() {
       setFile("")
       setImgfile("")
       setDescription("")
+      setCategory("")
     }
   }
   const checkInput = async () => {
@@ -150,14 +136,18 @@ function App() {
     // })
     console.log(bname, author, rating)
     if (bname.length < 3 || author.length < 3 || rating === "") {
-      alert("please fill the fields !!");
+      alert("please fill the fields !! filed should be greather than 3 characters");
       return false;
     }
-    if (file === null || file === "") {
+    else if (category === "") {
+      alert("please select category")
+      return false
+    }
+    else if (file === null || file === "") {
       alert("please select file!!!")
       return false
     }
-    if (imagefile === "") {
+    else if (imagefile === "") {
       alert("please select Image")
       return false;
     }
@@ -180,16 +170,24 @@ function App() {
           <div className='message'>
             <p>{Math.floor(uploadPercent)}% is finished uploading</p>
           </div>
-          Modal</div>}
+        </div>}
 
       <h1>Online Book store</h1>
       <h2>Upload pdf to the cloud store </h2>
       <form>
         <fieldset>
           <legend>Fill the following</legend>
+          <select name='category' onChange={e => setCategory(e.target.value)} id="category">
+            <option value="">Please Select</option>
+            <option value="Fiction" >Fictional</option>
+            <option value="Non-Fiction">Non-fiction</option>
+            <option value="EducationalReference">EducationalReference</option>
+            <option value="BioGraphy">BioGraphy</option>
+            <option value="Economics">Economics</option>
+          </select>
           <input placeholder='Name of Book' type='text' required onChange={(e) => setName(e.target.value)} value={bname} />
           <input placeholder='Author of Book' type='text' required value={author} onChange={(e) => setAuthor(e.target.value)} />
-          <input placeholder='Rating' type="number" max={5} min={0} required value={rating} onChange={e => setRating(e.target.value)} />
+          <input placeholder='Rating' type="number" max="5" min="0" required value={rating} onChange={e => setRating(e.target.value)} />
           <input placeholder='description' type="text" value={description} onChange={e => setDescription(e.target.value)} />
         </fieldset>
       </form>
@@ -197,7 +195,6 @@ function App() {
       <input type="file" accept='application/pdf' id='file' onChange={onchange} required />
       <p>Choose image of Book</p>
       <input type="file" accept="image/*" id="img" onChange={handleImge} />
-
       <img alt='book image' src={imagefile ? URL.createObjectURL(imagefile) : ""} width="100px" height="100px"
         style={{ objectFit: "cover" }} />
       <button onClick={uploadFile}>upload</button>

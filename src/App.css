@@ -58,8 +58,15 @@ button {
 
 .message {
   background: white;
-  padding: 10px 20px;
+  padding: 30px 30px;
   width: 100%;
-  height: 100px;
+  height: 200px;
   color: rgb(37, 37, 195);
+  border-radius: 20px;
+
+}
+
+#category {
+  padding: 10px 5px;
+  border-radius: 10px;
 }
