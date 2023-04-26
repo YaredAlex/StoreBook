@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import "./config"
 import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { doc, setDoc, collection, addDoc, getFirestore } from "firebase/firestore";
 import swal from 'sweetalert'
 function App() {
@@ -10,13 +10,14 @@ function App() {
   const [show, setShow] = useState(false)
   const [file, setFile] = useState("");
   const [upfailed, setUpfailed] = useState(false)
-  const [fileUrl, setFileurl] = useState("")
+  const fileUrl = useRef("")
   const [bname, setName] = useState("");
   const [author, setAuthor] = useState("");
   const [rating, setRating] = useState("");
   const [uploadPercent, setUploadPercent] = useState("");
-  const [imagefile, setImgfile] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
+  const [imagefile, setImgfile] = useState("");
+  const imageUrl = useRef("")
+  const [description, setDescription] = useState("");
   const uploadFile = async () => {
     const isChecked = await checkInput();
     if (isChecked) {
@@ -57,7 +58,7 @@ function App() {
             // Handle successful uploads on complete
             // For instance, get the download URL: https://firebasestorage.googleapis.com/...
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              setFileurl(downloadURL);
+              fileUrl.current = downloadURL;
               // uploadToFireBase();
               uploadImage();
 
@@ -104,7 +105,7 @@ function App() {
           // Handle successful uploads on complete
           // For instance, get the download URL: https://firebasestorage.googleapis.com/...
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUrl(downloadURL);
+            imageUrl.current = downloadURL
             console.log("fileUrl is", fileUrl, "image url is", imageUrl)
             uploadToFireBase();
             setShow(false)
@@ -124,8 +125,9 @@ function App() {
         name: bname,
         author: author,
         rating: rating,
-        fileUrl: fileUrl,
-        imageUrl: imageUrl
+        fileUrl: fileUrl.current,
+        imageUrl: imageUrl.current,
+        description: description
       }).then(res => {
         console.log("uploaded", res)
         swal("Uploaded", "file uploaded successfully", "success");
@@ -136,6 +138,7 @@ function App() {
       setRating("")
       setFile("")
       setImgfile("")
+      setDescription("")
     }
   }
   const checkInput = async () => {
@@ -157,6 +160,9 @@ function App() {
     if (imagefile === "") {
       alert("please select Image")
       return false;
+    }
+    if (description.length < 10) {
+      alert("please description is required at least 10 characters")
     }
     return true;
   }
@@ -183,7 +189,8 @@ function App() {
           <legend>Fill the following</legend>
           <input placeholder='Name of Book' type='text' required onChange={(e) => setName(e.target.value)} value={bname} />
           <input placeholder='Author of Book' type='text' required value={author} onChange={(e) => setAuthor(e.target.value)} />
-          <input placeholder='Rating' type="number" required value={rating} onChange={e => setRating(e.target.value)} />
+          <input placeholder='Rating' type="number" max={5} min={0} required value={rating} onChange={e => setRating(e.target.value)} />
+          <input placeholder='description' type="text" value={description} onChange={e => setDescription(e.target.value)} />
         </fieldset>
       </form>
       <p>Choose pdf file</p>
