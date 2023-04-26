@@ -105,7 +105,7 @@ function App() {
           // For instance, get the download URL: https://firebasestorage.googleapis.com/...
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setImageUrl(downloadURL);
-
+            console.log("fileUrl is", fileUrl, "image url is", imageUrl)
             uploadToFireBase();
             setShow(false)
           });
@@ -172,7 +172,7 @@ function App() {
       {show &&
         <div className='modal'>
           <div className='message'>
-            <p>{uploadPercent}% is finished uploading</p>
+            <p>{Math.floor(uploadPercent)}% is finished uploading</p>
           </div>
           Modal</div>}
 
